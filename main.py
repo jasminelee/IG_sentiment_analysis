@@ -1,22 +1,35 @@
 import urllib,json
 from instagram.client import InstagramAPI
+import pprint
 
 access_token = "251678025.7724d33.79f467adec834d94aca2b87619975301"
 client_secret = "d9f0149ef49a4e658016f5acd07372c0"
 
-
+print "yo"
 api = InstagramAPI(access_token=access_token, client_secret=client_secret)
-hashtag = api.tag_search('capitalone')[0][0]
-tags = api.tag_recent_media(20, None,'capitalone')
-posts = tags[0] #choose the exact 'capitalone' tag, not the 'capitalonecup' kind of tags. data is a list of Media objects/the last 20 posts
 
+tags = api.tag_recent_media(20, None,'capitalone')
+print tags
+posts = tags[0] #choose the exact 'capitalone' tag, not the 'capitalonecup' kind of tags. data is a list of Media objects/the last 20 posts
+print posts
 user_ids = map(lambda x: x.user.id, posts)
+
+# url = "https://api.instagram.com/v1/tags/capitalone/media/recent?access_token=" + access_token
+# response = urllib.urlopen(url)
+# data = json.loads(response.read())
+
+# for each in data:
+# 	print type(each)
+# #	each['user']['id'] a
+# #pprint.pprint(data['data'])
+# users = map(lambda x: x['user']['id'], data['data'])
+# print users
 
 # num_followers is the number of followers. num_followers is the number of ppl a user follows. 
 # used dictionaries instead of arrays to map user with their information. 
 # num_followers, num_posts, num_follows = {}, {}, {}
 # for user in user_ids:
-# 	url = "https://api.instagram.com/v1/users/" + user + "/?access_token=251678025.7724d33.79f467adec834d94aca2b87619975301"
+# 	url = "https://api.instagram.com/v1/users/" + user + "/?access_token=" + access_token
 # 	response = urllib.urlopen(url)
 # 	data = json.loads(response.read())
 # 	num_followers[user] = data['data']['counts']['followed_by']
@@ -38,7 +51,7 @@ for media in posts:
 	the_page = u.read()
 	analyzed_posts.append(the_page)
 	# get likes
-	url = "https://api.instagram.com/v1/media/" + media.id + "/likes?access_token=251678025.7724d33.79f467adec834d94aca2b87619975301"
+	url = "https://api.instagram.com/v1/media/" + media.id + "/likes?access_token=" + access_token
 	response = urllib.urlopen(url)
 	like_data = json.loads(response.read())
 	num_likes.append(len(like_data['data']))
@@ -50,7 +63,7 @@ sentiments['pos'] = 0
 sentiments['neutral'] = 0
 
 for post in analyzed_posts:
-	print post['label'][0]
+	print post[0]['label']
 	if post['probability']['label'] == 'neg':
 		sentiments['neg'] += 1
 	elif post['probability']['label'] == 'pos':
