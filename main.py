@@ -28,7 +28,7 @@ user_ids = map(lambda x: x.user.id, posts)
 # print num_posts
 # print num_follows
 
-# used arrays instead of dictionaries in order to maintain the most recent order
+#used arrays instead of dictionaries in order to maintain the most recent order
 analyzed_posts = []
 num_likes =[]
 for media in posts:
@@ -44,68 +44,17 @@ for media in posts:
 	num_likes.append(len(like_data['data']))
 print num_likes
 
+sentiments = {}
+sentiments['neg'] = 0
+sentiments['pos'] = 0 
+sentiments['neutral'] = 0
 
-print analyzed_posts
-
-
-
-	# recent_media, next = api.user_recent_media(user_id=user)
-	# num_posts = len(recent_media) #initialize number of posts to first page's num posts
-	# while next: # add the rest of the pages posts to num posts
-	#     more_media, next = api.user_recent_media(with_next_url=next)
-	#     recent_media.extend(more_media)
-	#     num_posts += len(more_media)
-	# num_user_posts[user] = num_posts
-
-# ppl_users_follow = {}
-# for user in users:
-# 	following, next = api.user_follows(user_id = user) #num ppl user is following
-# 	num_following = len(following)
-# 	while next:
-# 		more_following, next = api.user_follows(with_next_url=next)
-# 		following.extend(more_following)
-#		num_following += len(more_following)
-# 		for user_being_followed in more_following:
-# 			num_following+=1
-# 	ppl_users_follow[user] = num_following
-# #print ppl_users_follow
-
-# number of ppl following a user -- FIX
-# users_followers = {}
-# for user in users:
-# 	followers, next = api.user_followed_by(user_id = user)
-# 	num_followers = len(followers)
-# 	while next:
-# 		more_followers, next = api.user_followed_by(with_next_url=next)
-# 		followers.extend(more_followers)
-# 		num_followers += len(more_followers)
-
-# 		# for follower in more_followers:
-# 		# 	print "ho"
-# 		# 	num_followers+=1
-# 	users_followers[user] = num_followers
-# print users_followers
-
-
-# person = data[0].user.id # 
-# print len(api.user_follows(person)[0]) #number of ppl this user follows. must do [0] bc ds is a tuple
-# print len(api.user_followed_by(person)[0]) #number of ppl following this user
-
-
-#number of posts users have
-
-
-
-# for media in data:
-# 	print media.likes
-
-# user = api.user_search('crizzlelee')[0].id
-# recent_media, next_ = api.user_recent_media(user_id=user, count=10)
-# for media in recent_media:
-# 	print media.comments
-#   print media.caption.text
-
-#	print media.caption.text, #({"text": "I love eating pizza, it's delicious!"})
-
-
-
+for post in analyzed_posts:
+	print post['label'][0]
+	if post['probability']['label'] == 'neg':
+		sentiments['neg'] += 1
+	elif post['probability']['label'] == 'pos':
+		sentiments['pos'] += 1
+	elif post['probability']['label'] == 'neutral':
+		sentiments['neutral'] += 1
+print sentiments
