@@ -8,11 +8,12 @@ client_secret = "d9f0149ef49a4e658016f5acd07372c0"
 api = InstagramAPI(access_token=access_token, client_secret=client_secret)
 hashtag = api.tag_search('capitalone')[0][0]
 tags = api.tag_recent_media(20, None,'capitalone')
-data = tags[0] #choose the exact 'capitalone' tag, not the 'capitalonecup' kind of tags. data is a list of Media objects/the last 20 posts
+posts = tags[0] #choose the exact 'capitalone' tag, not the 'capitalonecup' kind of tags. data is a list of Media objects/the last 20 posts
 
-user_ids = map(lambda x: x.user.id, data)
+user_ids = map(lambda x: x.user.id, posts)
 
-# #how many ppl a user follows
+# num_followers is the number of followers. num_followers is the number of ppl a user follows. 
+# used dictionaries instead of arrays to map user with their information. 
 # num_followers, num_posts, num_follows = {}, {}, {}
 # for user in user_ids:
 # 	url = "https://api.instagram.com/v1/users/" + user + "/?access_token=251678025.7724d33.79f467adec834d94aca2b87619975301"
@@ -27,13 +28,25 @@ user_ids = map(lambda x: x.user.id, data)
 # print num_posts
 # print num_follows
 
-#sentiment analysis
-for media in data:
-#	print media.caption.text, #({"text": "I love eating pizza, it's delicious!"})
-	stuff = urllib.urlencode({"text": (media.caption.text).encode('utf-8')}) 
-	u = urllib.urlopen("http://text-processing.com/api/sentiment/", stuff)
+# used arrays instead of dictionaries in order to maintain the most recent order
+analyzed_posts = []
+num_likes =[]
+for media in posts:
+	# sentiment analysis
+	sentiment_data = urllib.urlencode({"text": (media.caption.text).encode('utf-8')})
+	u = urllib.urlopen("http://text-processing.com/api/sentiment/", sentiment_data)
 	the_page = u.read()
-	print the_page
+	analyzed_posts.append(the_page)
+	# get likes
+	url = "https://api.instagram.com/v1/media/" + media.id + "/likes?access_token=251678025.7724d33.79f467adec834d94aca2b87619975301"
+	response = urllib.urlopen(url)
+	like_data = json.loads(response.read())
+	num_likes.append(len(like_data['data']))
+print num_likes
+
+
+print analyzed_posts
+
 
 
 	# recent_media, next = api.user_recent_media(user_id=user)
@@ -91,5 +104,8 @@ for media in data:
 # for media in recent_media:
 # 	print media.comments
 #   print media.caption.text
+
+#	print media.caption.text, #({"text": "I love eating pizza, it's delicious!"})
+
 
 
